@@ -15,12 +15,11 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d("App start", "App start");
-
-        FragmentManager fragmentManager = this.getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         RobotsViewModel model = ViewModelProviders.of(this).get(RobotsViewModel.class);
+
+        FragmentManager fm = this.getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
 
         Button searchForRobots = findViewById(R.id.search_for_robots);
         searchForRobots.setOnClickListener(view -> {
