@@ -67,7 +67,11 @@ public class RobotViewModel extends ViewModel {
         }
     }
 
-    public void goToTable(int tableNumber) {
+    public void goToTable(String tableId) {
+        Robot robot = liveRobot.getValue();
+        RobotAPI api = new RobotAPI();
+        JSONObject response = api.request(robot.getIp(), "go_to_table",
+                new String[]{"id"}, new String[]{tableId});
     }
 
     public void update() {

@@ -9,7 +9,7 @@ public class Robot {
     private String state;
     private String currentPosition;
     private String destination;
-    private List<Integer> tables;
+    private List<String> tables;
 
     public String getIp() {
         return ip;
@@ -43,7 +43,7 @@ public class Robot {
         this.destination = destination;
     }
 
-    public List<Integer> getTables() {
+    public List<String> getTables() {
         return tables;
     }
 
