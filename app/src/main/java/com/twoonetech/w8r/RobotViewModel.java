@@ -1,77 +1,35 @@
 package com.twoonetech.w8r;
 
-import android.annotation.SuppressLint;
-import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.List;
-import java.util.Arrays;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Arrays;
 import java.util.Locale;
-import java.util.Map;
 
 public class RobotViewModel extends ViewModel {
 
-    private final MutableLiveData<Robot> liveRobot = new MutableLiveData<Robot>();
+    private final MutableLiveData<Robot> liveRobot = new MutableLiveData<>();
 
     public LiveData<Robot> getLiveRobot() {
-        return this.liveRobot;
+        return liveRobot;
     }
 
     public void init(String ip) {
         Robot robot = new Robot(ip);
         liveRobot.setValue(robot);
-    }
-
-    private String requestStatus(String ip){
-        RobotAPI api = new RobotAPI();
-        JSONObject response = api.request(ip, "get_status",
-                new String[]{}, new String[]{});
-        try {
-            return response.getJSONObject("output").getString("status");
-        }
-        catch (Exception e){
-            return "unknown";
-        }
-    }
-
-    public List<String> requestTables(String ip){
-        RobotAPI api = new RobotAPI();
-        JSONObject response = api.request(ip, "get_tables",
-                new String[]{}, new String[]{});
-        try {
-            String[] tables = response.getString("output").split(" ");
-            return Arrays.asList(tables);
-        }
-        catch (Exception e){
-            return Arrays.asList();
-        }
-    }
-
-    public void goToTable(String tableId) {
-        Robot robot = liveRobot.getValue();
-        RobotAPI api = new RobotAPI();
-        JSONObject response = api.request(robot.getIp(), "go_to_table",
-                new String[]{"id"}, new String[]{tableId});
+        update();
     }
 
     public void update() {
@@ -80,10 +38,68 @@ public class RobotViewModel extends ViewModel {
         if (this.requestTables(robot.getIp()).size() == 0) {
             robot.setTables(this.requestTables(robot.getIp()));
         }
-        liveRobot.setValue(robot);
+        liveRobot.postValue(robot);
     }
 
+    public void goToTable(String tableId) {
+        Robot robot = liveRobot.getValue();
+        JSONObject response = httpRequest(robot.getIp(), "go_to_table", new String[]{"id"}, new String[]{tableId});
+    }
 
+    private String requestStatus(String ip){
+        JSONObject response = httpRequest(ip, "get_status", new String[]{}, new String[]{});
+        try {
+            return response.getJSONObject("output").getString("status");
+        }
+        catch (Exception e){
+            return e.getLocalizedMessage();
+        }
+    }
+
+    private List<String> requestTables(String ip){
+        JSONObject response = httpRequest(ip, "get_tables", new String[]{}, new String[]{});
+        try {
+            String[] tables = response.getString("output").split(" ");
+            return Arrays.asList(tables);
+        }
+        catch (Exception e){
+            return Arrays.asList(e.getLocalizedMessage());
+        }
+    }
+
+    private static JSONObject httpRequest(String ip, String command, String[] args_names, String[] args_values) {
+        String datetime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date());
+        JSONObject response = null;
+        try {
+            JSONObject arguments = new JSONObject()
+                    .put("name", command);
+            for (int i = 0; i < args_names.length; i++) {
+                arguments.put(args_names[i], args_values[i]);
+            }
+            JSONObject request = new JSONObject()
+                    .put("timestamp", datetime)
+                    .put("arguments", arguments);
+            //This encodes the result string to UTF-8, so that it can be received
+            // correctly by the Pi.
+            Log.d("hi", request.toString());
+            String encodedJsonString = URLEncoder.encode(request.toString(), "UTF-8");
+            URL url = new URL("http://" + ip + ":5000/data?json=" + encodedJsonString);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setRequestMethod("GET");  //timeout?
+
+            String responseString = "";
+            BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                responseString += line + "\n";
+            }
+            response = new JSONObject(responseString);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
 
 
 //    public void getMap(String ip){

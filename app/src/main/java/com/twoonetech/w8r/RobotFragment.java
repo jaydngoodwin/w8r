@@ -3,6 +3,7 @@ package com.twoonetech.w8r;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -32,7 +33,7 @@ public class RobotFragment extends Fragment {
             public void run() {
                 robotViewModel.update();
             }
-        },0,500);
+        },0,1000);
     }
 
     @Override
@@ -51,18 +52,22 @@ public class RobotFragment extends Fragment {
         robotViewModel.getLiveRobot().observe(this, robot -> {
             if (robot != null) {
                 //If the robot data has been fetched
-                if (robot.getState().equals("idle")) {
-                    state.setBackgroundColor(Color.parseColor("#29ff11"));
-                } else if (robot.getState().equals("following")) {
-                    state.setBackgroundColor(Color.parseColor("#ff9500"));
-                } else if (robot.getState().equals("obstacle")) {
-                    state.setBackgroundColor(Color.parseColor("#ff140c"));
+                switch (robot.getState()) {
+                    case "idle":
+                        state.setBackgroundColor(Color.parseColor("#29ff11"));
+                        break;
+                    case "following":
+                        state.setBackgroundColor(Color.parseColor("#ff9500"));
+                        break;
+                    case "obstacle":
+                        state.setBackgroundColor(Color.parseColor("#ff140c"));
+                        break;
                 }
             }
         });
 
         goToTable.setOnClickListener(view1 -> {
-            robotViewModel.goToTable("2");
+            AsyncTask.execute(() -> robotViewModel.goToTable("1"));
         });
 
         returnToBar.setOnClickListener(view1 -> {

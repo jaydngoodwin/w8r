@@ -37,8 +37,7 @@ public class RobotAPI {
             httpURLConnection.setRequestMethod("GET");  //timeout?
 
             String responseString = "";
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(httpURLConnection.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
                 responseString += line + "\n";
