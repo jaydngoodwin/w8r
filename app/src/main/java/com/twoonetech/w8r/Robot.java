@@ -13,4 +13,36 @@ public class Robot {
     public Robot(String ip) {
         this.ip = ip;
     }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public void setCurrentPosition(String currentPosition) {
+        this.currentPosition = currentPosition;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public List<Integer> getTables() {
+        return tables;
+    }
+
+    public void setTables(List<Integer> tables) {
+        this.tables = tables;
+    }
 }

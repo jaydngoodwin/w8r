@@ -40,8 +40,8 @@ public class RobotViewModel extends ViewModel {
         liveRobot.setValue(robot);
     }
 
-    public void update() {
-        liveRobot.setValue(new Robot());
+    public void updateLiveRobot(Robot robot) {
+        liveRobot.setValue(robot);
     }
 
 

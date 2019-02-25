@@ -2,6 +2,7 @@ package com.twoonetech.w8r;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -44,63 +45,29 @@ public class RobotFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState){
         //Get views
+        View state = view.findViewById(R.id.state);
+        Button goToTable = view.findViewById(R.id.go_to_table);
+        Button returnToBar = view.findViewById(R.id.return_to_bar);
 
         //Observe live data from robots view model
         robotViewModel.getLiveRobot().observe(this, robot -> {
             if (robot != null) {
-                //If the robot data has been fetched from the database
-            } else {
-                //If the robot data has not been fetched from the database
+                //If the robot data has been fetched
+                if (robot.getState().equals("idle")) {
+                    state.setBackgroundColor(Color.parseColor("#29ff11"));
+                } else if (robot.getState().equals("following")) {
+                    state.setBackgroundColor(Color.parseColor("#ff9500"));
+                } else if (robot.getState().equals("obstacle")) {
+                    state.setBackgroundColor(Color.parseColor("#ff140c"));
+                }
             }
         });
 
-//        Button getStatus = view.findViewById(R.id.get_status);
-//        getStatus.setOnClickListener(view1 -> {
-//            robotViewModel.sendCommand("192.168.105.149","get_status",new String[]{});
-//        });
-//
-//        Button getMap = view.findViewById(R.id.get_map);
-//        getStatus.setOnClickListener(view1 -> {
-//            robotViewModel.sendCommand("192.168.105.149","get_map",new String[]{});
-//        });
-//
-//        Button getTables = view.findViewById(R.id.get_tables);
-//        getTables.setOnClickListener(view1 -> {
-//            robotViewModel.sendCommand("192.168.105.149","get_tables",new String[]{});
-//        });
-
-        Button goToTable = view.findViewById(R.id.go_to_table);
         goToTable.setOnClickListener(view1 -> {
-            //robotViewModel.sendCommand("192.168.105.149","go_to_table",new String[]{});
-            String datetime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date());
-
-            JSONObject jsonObject = null;
-
-            try {
-                jsonObject = new JSONObject()
-                        .put("timestamp", datetime)
-                        .put("data", new JSONObject()
-                                .put("command", "go_to_table")
-                                .put("args", new JSONArray("2")));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            String jsonString = jsonObject.toString();
-
-            try {
-                //This encodes the result string to UTF-8, so that it can be received correctly by the Pi.
-                String encodedJsonString = URLEncoder.encode(jsonString, "UTF-8");
-                String urn = "http://" + ip + ":5000/data?json=" + encodedJsonString;
-                PostHttpRequestTask postHttpRequestTask = new PostHttpRequestTask();
-                postHttpRequestTask.execute(urn);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            robotViewModel.goToTable(2);
         });
 
-        Button test = view.findViewById(R.id.test);
-        test.setOnClickListener(view1 -> {
+        returnToBar.setOnClickListener(view1 -> {
 
         });
     }
