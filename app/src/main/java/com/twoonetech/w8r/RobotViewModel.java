@@ -80,6 +80,7 @@ public class RobotViewModel extends ViewModel {
         if (this.requestTables(robot.getIp()).size() == 0) {
             robot.setTables(this.requestTables(robot.getIp()));
         }
+        liveRobot.setValue(robot);
     }
 
 

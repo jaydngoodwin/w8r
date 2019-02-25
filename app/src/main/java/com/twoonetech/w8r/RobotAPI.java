@@ -1,4 +1,6 @@
 package com.twoonetech.w8r;
+import android.util.Log;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -28,6 +30,7 @@ public class RobotAPI {
                     .put("arguments", arguments);
             //This encodes the result string to UTF-8, so that it can be received
             // correctly by the Pi.
+            Log.d("hi", request.toString());
             String encodedJsonString = URLEncoder.encode(request.toString(), "UTF-8");
             URL url = new URL("http://" + ip + ":5000/data?json=" + encodedJsonString);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
