@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Mapping {
+public class RobotMap {
 
     String robotId;
     List<Node> nodes = new ArrayList<>();
@@ -19,7 +19,7 @@ public class Mapping {
 
     String jsonString = "{\"metadata\":{\"Robot ID\":\"C3-PO\"},\"nodes\":[{\"id\":1,\"neighbours\":[1,4],\"edges\":[1,2],\"type\":\"intersection\"},{\"id\":2,\"neighbours\":[3,1],\"edges\":[3,1],\"type\":\"table\"},{\"id\":3,\"neighbours\":[4,2],\"edges\":[4,3],\"type\":\"intersection\"},{\"id\":4,\"neighbours\":[5,3,1],\"edges\":[5,4,2],\"type\":\"intersection\"},{\"id\":5,\"neighbours\":[4],\"edges\":[5],\"type\":\"table\"}],\"edges\":[{\"id\":1,\"nodes\":[1,2],\"length\":181},{\"id\":2,\"nodes\":[1,4],\"length\":314},{\"id\":3,\"nodes\":[2,3],\"length\":211},{\"id\":4,\"nodes\":[3,4],\"length\":541},{\"id\":5,\"nodes\":[4,5],\"length\":111}]}";
 
-    public Mapping() throws JSONException {
+    public RobotMap() throws JSONException {
         parseEdges(jsonString);
         parseNodes(jsonString);
 

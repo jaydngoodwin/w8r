@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,18 +15,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RobotsViewModel model = ViewModelProviders.of(this).get(RobotsViewModel.class);
-
         FragmentManager fm = this.getSupportFragmentManager();
+
+        Bundle args = new Bundle();
+        args.putString("ip","192.168.105.149");
+        RobotFragment robotFragment = new RobotFragment();
+        robotFragment.setArguments(args);
+
         FragmentTransaction ft = fm.beginTransaction();
-
-        Button searchForRobots = findViewById(R.id.search_for_robots);
-        searchForRobots.setOnClickListener(view -> {
-
-        });
+        ft.replace(R.id.fragment_container,robotFragment).commit();
 
         Button help = findViewById(R.id.help);
-        searchForRobots.setOnClickListener(view -> {
+        help.setOnClickListener(view -> {
 
         });
 
