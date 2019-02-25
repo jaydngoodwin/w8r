@@ -40,19 +40,23 @@ public class RobotViewModel extends ViewModel {
         liveRobot.setValue(robot);
     }
 
-    public void updateLiveRobot(Robot robot) {
-        liveRobot.setValue(robot);
+    private String requestStatus(){
+        return "";
+    }
+
+    public void requestTables(String ip){
+
+    }
+
+    public void update() {
+        Robot robot = liveRobot.getValue();
+        robot.setState(this.requestStatus());
+        if (robot.getTables().size() == 0) {
+            robot.setTables(this.requestTables());
+        }
     }
 
 
-    public void getStatus(String ip){
-        GetHttpRequestTask getHttpRequestTask = new GetHttpRequestTask(ip,
-        GetHttpRequestTask getHttpRequestTask = new GetHttpRequestTask(ip,
-    }
-
-    public void getTables(String ip){
-
-    }
 
     public void goToTable(int tableNumber) {
 

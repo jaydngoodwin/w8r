@@ -3,23 +3,9 @@ package com.twoonetech.w8r;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.os.AsyncTask;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
 
 public class RobotRepository {
 
@@ -45,7 +31,7 @@ public class RobotRepository {
 //            String encodedJsonString= URLEncoder.encode(jsonString, "UTF-8" );
 //            String urn = "http://"+ip+":5000/data?json="+encodedJsonString;
 //
-//            GetHttpRequestTask getHttpRequestTask = new GetHttpRequestTask(result -> {
+//            RobotAPI robotAPI = new RobotAPI(result -> {
 //                //Get information out of result and put into robot class and then into robot live data and then return i
 //                JSONObject robotJson = null;
 //                try {
@@ -61,7 +47,7 @@ public class RobotRepository {
 //        } catch (UnsupportedEncodingException e) {
 //            e.printStackTrace();
 //        }
-        GetHttpRequestTask getHttpRequestTask = new GetHttpRequestTask(result -> {
+        RobotAPI robotAPI = new RobotAPI(result -> {
             //Get information out of result and put into robot class and then into robot live data and then return i
             JSONObject robotJson = null;
             try {
