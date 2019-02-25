@@ -4,11 +4,16 @@ import java.util.List;
 
 public class Robot {
 
+
     private String ip;
     private String state;
     private String currentPosition;
     private String destination;
     private List<Integer> tables;
+
+    public String getIp() {
+        return ip;
+    }
 
     public Robot(String ip) {
         this.ip = ip;
@@ -42,7 +47,7 @@ public class Robot {
         return tables;
     }
 
-    public void setTables(List<Integer> tables) {
+    public void setTables(List<String> tables) {
         this.tables = tables;
     }
 }

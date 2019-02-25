@@ -12,6 +12,8 @@ import android.support.annotation.NonNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.util.List;
+import java.util.Arrays;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,27 +42,35 @@ public class RobotViewModel extends ViewModel {
         liveRobot.setValue(robot);
     }
 
-    private String requestStatus(){
-        return "";
+    private String requestStatus(String ip){
+        RobotAPI api = new RobotAPI();
+        JSONObject response = api.request(ip, "get_status",
+                new String[]{}, new String[]{});
+        try {
+            return response.getJSONObject("output").getString("status");
+        }
+        catch (Exception e){
+            return "unknown";
+        }
     }
 
-    public void requestTables(String ip){
+    public List<String> requestTables(String ip){
+        return Arrays.asList("1");
+    }
 
+    public void goToTable(int tableNumber) {
     }
 
     public void update() {
         Robot robot = liveRobot.getValue();
-        robot.setState(this.requestStatus());
-        if (robot.getTables().size() == 0) {
-            robot.setTables(this.requestTables());
+        robot.setState(this.requestStatus(robot.getIp()));
+        if (this.requestTables(robot.getIp()).size() == 0) {
+            robot.setTables(this.requestTables(robot.getIp()));
         }
     }
 
 
 
-    public void goToTable(int tableNumber) {
-
-    }
 
 //    public void getMap(String ip){
 //
