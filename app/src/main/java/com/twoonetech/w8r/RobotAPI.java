@@ -18,12 +18,14 @@ public class RobotAPI {
                 .format(new Date());
         JSONObject response = null;
         try {
+            JSONObject arguments = new JSONObject()
+                    .put("name", command);
+            for (int i = 0; i < args_names.length; i++) {
+                arguments.put(args_names[i], args_values[i]);
+            }
             JSONObject request = new JSONObject()
                     .put("timestamp", datetime)
-                    .put("command", command);
-            for (int i = 0; i < args_names.length; i++) {
-                request.put(args_names[i], args_values[i]);
-            }
+                    .put("arguments", arguments);
             //This encodes the result string to UTF-8, so that it can be received
             // correctly by the Pi.
             String encodedJsonString = URLEncoder.encode(request.toString(), "UTF-8");

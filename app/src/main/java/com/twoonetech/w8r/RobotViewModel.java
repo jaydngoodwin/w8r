@@ -55,7 +55,16 @@ public class RobotViewModel extends ViewModel {
     }
 
     public List<String> requestTables(String ip){
-        return Arrays.asList("1");
+        RobotAPI api = new RobotAPI();
+        JSONObject response = api.request(ip, "get_tables",
+                new String[]{}, new String[]{});
+        try {
+            String[] tables = response.getString("output").split(" ");
+            return Arrays.asList(tables);
+        }
+        catch (Exception e){
+            return Arrays.asList();
+        }
     }
 
     public void goToTable(int tableNumber) {
