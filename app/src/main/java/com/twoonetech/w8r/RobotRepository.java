@@ -19,12 +19,20 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 public class RobotRepository {
 
+    private Map<String,LiveData<Robot>> robotCache;
+
     @SuppressLint("StaticFieldLeak")
     public LiveData<Robot> getRobot(String ip) {
-        // This isn't an optimal implementation. We'll fix it later.
+
+        LiveData<Robot> cachedRobot = robotCache.get(ip);
+        if (cachedRobot != null) {
+            return cachedRobot;
+        }
+
         final MutableLiveData<Robot> liveRobot = new MutableLiveData<>();
 
         String datetime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date());
@@ -32,11 +40,7 @@ public class RobotRepository {
         JSONObject jsonObject = null;
 
         try {
-            jsonObject = new JSONObject()
-                    .put("timestamp", datetime)
-                    .put("data", new JSONObject()
-                            .put("command", "get_status")
-                            .put("args", new JSONArray("")));
+            jsonObject = new JSONObject().put("timestamp",datetime).put("command","get_status").put("args",new JSONArray(""));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -47,10 +51,6 @@ public class RobotRepository {
             //This encodes the result string to UTF-8, so that it can be received correctly by the Pi.
             String encodedJsonString= URLEncoder.encode(jsonString, "UTF-8" );
             String urn = "http://"+ip+":5000/data?json="+encodedJsonString;
-
-            //Instantiation of the Async task that’s defined below
-//            RequestDataAsync requestDataAsync = new RequestDataAsync();
-//            requestDataAsync.execute(URL);
 
             new AsyncTask<Void,Void,String>(){
                 @Override
@@ -95,6 +95,13 @@ public class RobotRepository {
                 protected void onPostExecute(String result) {
                     //parseJson(result);
                     //Get information out of result and put into robot class and then into robot live data and then return it
+
+                    JSONObject robotJson = null;
+                    try {
+                        robotJson = new JSONObject(result);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
                     Robot robot = new Robot(ip);
                     liveRobot.postValue(robot);

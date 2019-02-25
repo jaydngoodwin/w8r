@@ -14,10 +14,10 @@ public class HttpRequestTask extends AsyncTask<String,Void,String> {
 
     @Override
     protected String doInBackground(String... params) {
-        String my_url = params[0];
-        String my_data = params[1];
+        String urn = params[0];
+
         try {
-            URL url = new URL(my_url);
+            URL url = new URL(urn);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             // setting the  Request Method Type
             httpURLConnection.setRequestMethod("POST");
@@ -28,14 +28,6 @@ public class HttpRequestTask extends AsyncTask<String,Void,String> {
                 httpURLConnection.setDoOutput(true);
                 // this is used for just in case we don't know about the data size associated with our request
                 httpURLConnection.setChunkedStreamingMode(0);
-
-                // to write the data in our request
-                OutputStream outputStream = new BufferedOutputStream(httpURLConnection.getOutputStream());
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-                outputStreamWriter.write(my_data);
-                outputStreamWriter.flush();
-                outputStreamWriter.close();
-
                 // to log the response code of your request
                 Log.d("HttpRequestTask", "HttpRequestTask doInBackground : " +httpURLConnection.getResponseCode());
                 // to log the response message from your server after you have tried the request.
@@ -47,11 +39,9 @@ public class HttpRequestTask extends AsyncTask<String,Void,String> {
                 // this is done so that there are no open connections left when this task is going to complete
                 httpURLConnection.disconnect();
             }
-
         }catch (Exception e){
             e.printStackTrace();
         }
-
         return null;
     }
 }

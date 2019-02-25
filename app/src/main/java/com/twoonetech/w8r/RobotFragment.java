@@ -11,6 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class RobotFragment extends Fragment {
 
     private Context mContext;
@@ -54,17 +64,40 @@ public class RobotFragment extends Fragment {
 //        getStatus.setOnClickListener(view1 -> {
 //            robotViewModel.sendCommand("192.168.105.149","get_map",new String[]{});
 //        });
-
-        Button getTables = view.findViewById(R.id.get_tables);
-        getTables.setOnClickListener(view1 -> {
-            robotViewModel.sendCommand("192.168.105.149","get_tables",new String[]{});
-        });
+//
+//        Button getTables = view.findViewById(R.id.get_tables);
+//        getTables.setOnClickListener(view1 -> {
+//            robotViewModel.sendCommand("192.168.105.149","get_tables",new String[]{});
+//        });
 
         Button goToTable = view.findViewById(R.id.go_to_table);
         goToTable.setOnClickListener(view1 -> {
-            robotViewModel.sendCommand("192.168.105.149","go_to_table",new String[]{});
-            HttpRequestTask httpRequestTask = new HttpRequestTask();
-            httpRequestTask.execute("")
+            //robotViewModel.sendCommand("192.168.105.149","go_to_table",new String[]{});
+            String datetime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date());
+
+            JSONObject jsonObject = null;
+
+            try {
+                jsonObject = new JSONObject()
+                        .put("timestamp", datetime)
+                        .put("data", new JSONObject()
+                                .put("command", "go_to_table")
+                                .put("args", new JSONArray("2")));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            String jsonString = jsonObject.toString();
+
+            try {
+                //This encodes the result string to UTF-8, so that it can be received correctly by the Pi.
+                String encodedJsonString = URLEncoder.encode(jsonString, "UTF-8");
+                String urn = "http://" + ip + ":5000/data?json=" + encodedJsonString;
+                HttpRequestTask httpRequestTask = new HttpRequestTask();
+                httpRequestTask.execute(urn);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         });
 
         Button test = view.findViewById(R.id.test);
