@@ -33,7 +33,7 @@ public class RobotFragment extends Fragment {
         mContext = context;
         ip = getArguments().getString("ip");
         robotViewModel = ViewModelProviders.of(this).get(RobotViewModel.class);
-        robotViewModel.getLiveRobot(ip);
+        robotViewModel.init(ip);
     }
 
     @Override

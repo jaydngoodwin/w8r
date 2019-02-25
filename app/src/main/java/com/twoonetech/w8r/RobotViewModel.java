@@ -31,6 +31,15 @@ public class RobotViewModel extends ViewModel {
 
     private final MutableLiveData<Robot> liveRobot = new MutableLiveData<Robot>();
 
+    public LiveData<Robot> getLiveRobot() {
+        return this.liveRobot;
+    }
+
+    public void init(String ip) {
+        Robot robot = new Robot(ip);
+        liveRobot.setValue(robot);
+    }
+
     public void update() {
         liveRobot.setValue(new Robot());
     }
@@ -42,7 +51,11 @@ public class RobotViewModel extends ViewModel {
     }
 
     public void getTables(String ip){
-        liveRobot.
+
+    }
+
+    public void goToTable(int tableNumber) {
+
     }
 
 //    public void getMap(String ip){
