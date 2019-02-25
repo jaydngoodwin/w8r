@@ -11,34 +11,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class RobotFragment extends Fragment {
 
     private Context mContext;
 
-    private String ip;
     private RobotViewModel robotViewModel;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        ip = getArguments().getString("ip");
+        String ip = getArguments().getString("ip");
         robotViewModel = ViewModelProviders.of(this).get(RobotViewModel.class);
         robotViewModel.init(ip);
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                robotViewModel.update();
+            }
+        },0,500);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_robot, container, false);
     }
 
@@ -64,7 +62,7 @@ public class RobotFragment extends Fragment {
         });
 
         goToTable.setOnClickListener(view1 -> {
-            robotViewModel.goToTable(2);
+            robotViewModel.goToTable("2");
         });
 
         returnToBar.setOnClickListener(view1 -> {
