@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,8 +92,8 @@ public class RobotFragment extends Fragment {
                 //This encodes the result string to UTF-8, so that it can be received correctly by the Pi.
                 String encodedJsonString = URLEncoder.encode(jsonString, "UTF-8");
                 String urn = "http://" + ip + ":5000/data?json=" + encodedJsonString;
-                HttpRequestTask httpRequestTask = new HttpRequestTask();
-                httpRequestTask.execute(urn);
+                PostHttpRequestTask postHttpRequestTask = new PostHttpRequestTask();
+                postHttpRequestTask.execute(urn);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

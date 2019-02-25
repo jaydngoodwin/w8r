@@ -23,93 +23,57 @@ import java.util.Map;
 
 public class RobotRepository {
 
-    private Map<String,LiveData<Robot>> robotCache;
-
     @SuppressLint("StaticFieldLeak")
     public LiveData<Robot> getRobot(String ip) {
 
-        LiveData<Robot> cachedRobot = robotCache.get(ip);
-        if (cachedRobot != null) {
-            return cachedRobot;
-        }
-
         final MutableLiveData<Robot> liveRobot = new MutableLiveData<>();
 
-        String datetime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date());
+//        String datetime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date());
+//
+//        JSONObject jsonObject = null;
+//
+//        try {
+//            jsonObject = new JSONObject().put("timestamp",datetime).put("command","get_status").put("args",new JSONArray(""));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        String jsonString = jsonObject.toString();
+//
+//        try {
+//            //This encodes the result string to UTF-8, so that it can be received correctly by the Pi.
+//            String encodedJsonString= URLEncoder.encode(jsonString, "UTF-8" );
+//            String urn = "http://"+ip+":5000/data?json="+encodedJsonString;
+//
+//            GetHttpRequestTask getHttpRequestTask = new GetHttpRequestTask(result -> {
+//                //Get information out of result and put into robot class and then into robot live data and then return i
+//                JSONObject robotJson = null;
+//                try {
+//                    robotJson = new JSONObject((String) result);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                Robot robot = new Robot(ip);
+//                liveRobot.postValue(robot);
+//            });
+//
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+        GetHttpRequestTask getHttpRequestTask = new GetHttpRequestTask(result -> {
+            //Get information out of result and put into robot class and then into robot live data and then return i
+            JSONObject robotJson = null;
+            try {
+                robotJson = new JSONObject((String) result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-        JSONObject jsonObject = null;
+            Robot robot = new Robot(ip);
+            liveRobot.postValue(robot);
+        });
 
-        try {
-            jsonObject = new JSONObject().put("timestamp",datetime).put("command","get_status").put("args",new JSONArray(""));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        String jsonString = jsonObject.toString();
-
-        try {
-            //This encodes the result string to UTF-8, so that it can be received correctly by the Pi.
-            String encodedJsonString= URLEncoder.encode(jsonString, "UTF-8" );
-            String urn = "http://"+ip+":5000/data?json="+encodedJsonString;
-
-            new AsyncTask<Void,Void,String>(){
-                @Override
-                protected String doInBackground(Void... voids) {
-
-                    BufferedReader reader = null;
-
-                    try {
-                        URL url = new URL(urn);
-                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                        con.setRequestMethod("GET");
-
-                        StringBuilder sb = new StringBuilder();
-                        reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-                        String line;
-
-                        while ((line = reader.readLine()) != null) {
-                            sb.append(line + "\n");
-                        }
-
-                        return sb.toString();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return null;
-                    } finally {
-                        if (reader != null) {
-                            try {
-                                reader.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                return null;
-                            }
-                        }
-                    }
-                }
-
-                //The String that is returned in the doInBackground() method is sent to the onPostExecute() method below.
-                //The String should contain JSON data.
-                @Override
-                protected void onPostExecute(String result) {
-                    //parseJson(result);
-                    //Get information out of result and put into robot class and then into robot live data and then return it
-
-                    JSONObject robotJson = null;
-                    try {
-                        robotJson = new JSONObject(result);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    Robot robot = new Robot(ip);
-                    liveRobot.postValue(robot);
-                }
-            };
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
         return liveRobot;
     }
 }

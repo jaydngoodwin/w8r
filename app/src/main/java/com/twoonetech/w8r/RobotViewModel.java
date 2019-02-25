@@ -1,10 +1,13 @@
 package com.twoonetech.w8r;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,50 +29,21 @@ import java.util.Map;
 
 public class RobotViewModel extends ViewModel {
 
-    //private MutableLiveData<String> liveRobotData = new MutableLiveData<>();
-    private LiveData<Robot> robot;
-    private RobotRepository robotRepo;
-
-    public RobotViewModel(RobotRepository robotRepo) {
-        this.robotRepo = robotRepo;
-    }
+    private final MutableLiveData<Robot> liveRobot = new MutableLiveData<Robot>();
 
     public void init(String ip){
-        if (robot != null) {
-            // ViewModel is created on a per-Fragment basis, so the robot doesn't change.
-            return;
-        }
-        robot = robotRepo.getRobot(ip);
+        GetHttpRequestTask getHttpRequestTask = new GetHttpRequestTask(result -> {
+            //Get information out of result and put into robot class and then into robot live data and then return it
+            JSONObject robotJson = null;
+            try {
+                robotJson = new JSONObject((String) result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Robot robot = new Robot(ip);
+            liveRobot.postValue(robot);
+        });
     }
 
-    public LiveData<Robot> getRobot(){
-        return robot;
-    }
-
-//    private static String[] parseJson(String jsonString) {
-//
-//        String type = "";
-//        String stateType = "";
-//        String timeStamp = "";
-//        String message = "";
-//
-//        String[] resultString;
-//
-//        try {
-//            JSONObject jsonObject = new JSONObject(jsonString);
-//            type = jsonObject.get("type").toString();
-//            timeStamp = jsonObject.get("timestamp").toString();
-//            JSONObject arguments = jsonObject.getJSONObject("arguments");
-//            stateType = arguments.getString("name");
-//            message = arguments.getString("args");
-//
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        resultString = new String[]{type, stateType, timeStamp, message};
-//
-//        return resultString;
-//    }
 }
