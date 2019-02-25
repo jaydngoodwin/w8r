@@ -31,19 +31,33 @@ public class RobotViewModel extends ViewModel {
 
     private final MutableLiveData<Robot> liveRobot = new MutableLiveData<Robot>();
 
-    public void init(String ip){
-        GetHttpRequestTask getHttpRequestTask = new GetHttpRequestTask(result -> {
-            //Get information out of result and put into robot class and then into robot live data and then return it
-            JSONObject robotJson = null;
-            try {
-                robotJson = new JSONObject((String) result);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            Robot robot = new Robot(ip);
-            liveRobot.postValue(robot);
-        });
+    public void update() {
+        liveRobot.setValue(new Robot());
     }
+
+
+    public void getStatus(String ip){
+        GetHttpRequestTask getHttpRequestTask = new GetHttpRequestTask(ip,
+        GetHttpRequestTask getHttpRequestTask = new GetHttpRequestTask(ip,
+    }
+
+    public void getTables(String ip){
+        liveRobot.
+    }
+
+//    public void getMap(String ip){
+//
+//    }
+
+    //Get information out of result and put into robot class and then into robot live data and then return it
+//            JSONObject robotJson = null;
+//            try {
+//                robotJson = new JSONObject((String) result);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//            Robot robot = new Robot(ip);
+//            liveRobot.postValue(robot);
 
 }

@@ -17,25 +17,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class GetHttpRequestTask extends AsyncTask<String,Void,String> {
+public class GetHttpRequestTask extends AsyncTask<Void,Void,String> {
 
+    private String ip;
+    private String command;
+    private String[] args;
     private OnTaskCompleted listener;
 
-    public GetHttpRequestTask(OnTaskCompleted listener) {
+    public GetHttpRequestTask(String ip, String command, String[] args, OnTaskCompleted listener) {
+        this.ip = ip;
+        this.command = command;
+        this.args = args;
         this.listener = listener;
     }
 
     @Override
-    protected String doInBackground(String... args) {
-
-        String urn = args[0];
+    protected String doInBackground(Void... voids) {
 
         String datetime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date());
 
         JSONObject jsonObject = null;
 
         try {
-            jsonObject = new JSONObject().put("timestamp",datetime).put("command","get_status").put("args",new JSONArray(""));
+            jsonObject = new JSONObject().put("timestamp",datetime).put("command",command).put("args",new JSONArray(""));
         } catch (JSONException e) {
             e.printStackTrace();
         }

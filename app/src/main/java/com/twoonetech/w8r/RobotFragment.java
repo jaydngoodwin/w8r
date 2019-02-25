@@ -33,7 +33,7 @@ public class RobotFragment extends Fragment {
         mContext = context;
         ip = getArguments().getString("ip");
         robotViewModel = ViewModelProviders.of(this).get(RobotViewModel.class);
-        robotViewModel.init(ip);
+        robotViewModel.getLiveRobot(ip);
     }
 
     @Override
@@ -46,8 +46,8 @@ public class RobotFragment extends Fragment {
         //Get views
 
         //Observe live data from robots view model
-        robotViewModel.getRobot().observe(this, robotData -> {
-            if (robotData != null) {
+        robotViewModel.getLiveRobot().observe(this, robot -> {
+            if (robot != null) {
                 //If the robot data has been fetched from the database
             } else {
                 //If the robot data has not been fetched from the database
