@@ -7,10 +7,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,7 +37,7 @@ public class RobotFragment extends Fragment {
             public void run() {
                 robotViewModel.update();
             }
-        },0,1000);
+        },0,500);
     }
 
     @Override
@@ -45,6 +49,7 @@ public class RobotFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState){
         //Get views
         View state = view.findViewById(R.id.state);
+        TextView stateText = view.findViewById(R.id.state_text);
         Button goToTable = view.findViewById(R.id.go_to_table);
         Button returnToBar = view.findViewById(R.id.return_to_bar);
 
@@ -55,12 +60,15 @@ public class RobotFragment extends Fragment {
                 switch (robot.getState()) {
                     case "idle":
                         state.setBackgroundColor(Color.parseColor("#29ff11"));
+                        stateText.setText("IDLE");
                         break;
                     case "following":
                         state.setBackgroundColor(Color.parseColor("#ff9500"));
+                        stateText.setText("FOLLOWING");
                         break;
                     case "obstacle":
                         state.setBackgroundColor(Color.parseColor("#ff140c"));
+                        stateText.setText("OBSTACLE");
                         break;
                 }
             }
@@ -71,7 +79,7 @@ public class RobotFragment extends Fragment {
         });
 
         returnToBar.setOnClickListener(view1 -> {
-
+            AsyncTask.execute(() -> robotViewModel.returnToBar());
         });
     }
 

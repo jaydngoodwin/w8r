@@ -28,16 +28,20 @@ public class RobotViewModel extends ViewModel {
 
     public void init(String ip) {
         Robot robot = new Robot(ip);
+        robot.setState(requestStatus(robot.getIp()));
+        robot.setTables(requestTables(robot.getIp()));
         liveRobot.setValue(robot);
-        update();
     }
 
     public void update() {
         Robot robot = liveRobot.getValue();
-        robot.setState(this.requestStatus(robot.getIp()));
-        if (this.requestTables(robot.getIp()).size() == 0) {
-            robot.setTables(this.requestTables(robot.getIp()));
+        Long startTime = System.currentTimeMillis();
+        robot.setState(requestStatus(robot.getIp()));
+        if (robot.getTables().size() == 0) {
+            robot.setTables(requestTables(robot.getIp()));
         }
+        Long updateTime = System.currentTimeMillis();
+        Log.d("RobotUpdate",String.valueOf((updateTime/1000.0)-(startTime/1000.0)));
         liveRobot.postValue(robot);
     }
 
@@ -46,7 +50,7 @@ public class RobotViewModel extends ViewModel {
         httpRequest(robot.getIp(), "go_to_table", new String[]{"id"}, new String[]{tableId});
     }
 
-    private void returnToBar() {
+    public void returnToBar() {
         Robot robot = liveRobot.getValue();
         httpRequest(robot.getIp(),"stop",new String[]{}, new String[]{});
     }
@@ -110,16 +114,5 @@ public class RobotViewModel extends ViewModel {
 //    public void getMap(String ip){
 //
 //    }
-
-    //Get information out of result and put into robot class and then into robot live data and then return it
-//            JSONObject robotJson = null;
-//            try {
-//                robotJson = new JSONObject((String) result);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//
-//            Robot robot = new Robot(ip);
-//            liveRobot.postValue(robot);
 
 }
