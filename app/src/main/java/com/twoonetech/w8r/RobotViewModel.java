@@ -43,7 +43,12 @@ public class RobotViewModel extends ViewModel {
 
     public void goToTable(String tableId) {
         Robot robot = liveRobot.getValue();
-        JSONObject response = httpRequest(robot.getIp(), "go_to_table", new String[]{"id"}, new String[]{tableId});
+        httpRequest(robot.getIp(), "go_to_table", new String[]{"id"}, new String[]{tableId});
+    }
+
+    private void returnToBar() {
+        Robot robot = liveRobot.getValue();
+        httpRequest(robot.getIp(),"stop",new String[]{}, new String[]{});
     }
 
     private String requestStatus(String ip){
