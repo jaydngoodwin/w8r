@@ -23,19 +23,19 @@ public class RobotFragment extends Fragment {
 
     private Context mContext;
 
-    private RobotViewModel robotViewModel;
+    private SharedViewModel model;
+    private String ip;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        String ip = getArguments().getString("ip");
-        robotViewModel = ViewModelProviders.of(this).get(RobotViewModel.class);
-        robotViewModel.init(ip);
+        ip = getArguments().getString("ip");
+        model = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                robotViewModel.update();
+                model.updateRobot(ip);
             }
         },0,500);
     }
@@ -54,7 +54,8 @@ public class RobotFragment extends Fragment {
         Button returnToBar = view.findViewById(R.id.return_to_bar);
 
         //Observe live data from robots view model
-        robotViewModel.getLiveRobot().observe(this, robot -> {
+        model.getRobots().observe(this, robots -> {
+            Robot robot = model.getRobotWithIp(ip);
             if (robot != null) {
                 //If the robot data has been fetched
                 switch (robot.getState()) {
@@ -74,13 +75,9 @@ public class RobotFragment extends Fragment {
             }
         });
 
-        goToTable.setOnClickListener(view1 -> {
-            AsyncTask.execute(() -> robotViewModel.goToTable("1"));
-        });
+        goToTable.setOnClickListener(view1 -> AsyncTask.execute(() -> model.getRobotWithIp(ip).goToTable("1")));
 
-        returnToBar.setOnClickListener(view1 -> {
-            AsyncTask.execute(() -> robotViewModel.returnToBar());
-        });
+        returnToBar.setOnClickListener(view1 -> AsyncTask.execute(() -> model.getRobotWithIp(ip).returnToBar()));
     }
 
 }
