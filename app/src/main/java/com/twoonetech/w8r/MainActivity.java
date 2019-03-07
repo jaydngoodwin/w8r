@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -32,35 +33,55 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
     private SharedViewModel model;
-    private RobotRecyclerViewAdapter robotRecyclerViewAdapter;
+    private RobotsAdapter robotsAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        model = ViewModelProviders.of(this).get(SharedViewModel.class);
+//        model.addRobot(new Robot("192.169.105.149"));
+//
+//        FragmentManager fm = getSupportFragmentManager();
+//
+//        Bundle args = new Bundle();
+//        args.putString("ip","192.169.105.149");
+//        RobotFragment robotFragment = new RobotFragment();
+//        robotFragment.setArguments(args);
+//
+//        FragmentTransaction ft = fm.beginTransaction();
+//        ft.replace(R.id.fragment_container,robotFragment).commit();
+
         model = ViewModelProviders.of(this).get(SharedViewModel.class);
         model.init();
-        Map<String,String> ipNameMap = (Map<String,String>) PreferenceManager.getDefaultSharedPreferences(this).getAll();
-        Iterator it = ipNameMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            model.addRobot(new Robot((String) pair.getKey(),(String) pair.getValue()));
-            it.remove(); // avoids a ConcurrentModificationException
-        }
+
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
 
         // use a linear layout manager
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        // specify an adapter (see also next example)
-        robotRecyclerViewAdapter = new RobotRecyclerViewAdapter(model.getRobots().getValue());
-        recyclerView.setAdapter(robotRecyclerViewAdapter);
+        // specify an adapter
+        robotsAdapter = new RobotsAdapter(model.getRobots().getValue());
+        recyclerView.setAdapter(robotsAdapter);
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                model.updateRobots();
+            }
+        },0,1000);
+
+        model.getRobots().observe(this, robots -> {
+            robotsAdapter.setData(model.getRobots().getValue());
+        });
 
         IntentIntegrator scanIntegrator = new IntentIntegrator(this)
                 .setBeepEnabled(true)
@@ -73,11 +94,6 @@ public class MainActivity extends AppCompatActivity {
             scanIntegrator.initiateScan();
         });
 
-//        Button help = findViewById(R.id.help);
-//        help.setOnClickListener(view -> {
-//
-//        });
-
     }
 
     //when the camera has scanned something this will be executed
@@ -86,19 +102,12 @@ public class MainActivity extends AppCompatActivity {
         IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if (scanResult != null) {
             String scannedString = scanResult.getContents();
+            Log.d("IP",scannedString);
             if (scannedString != null && isValidIp(scannedString)) {
                 Toast.makeText(this, "Scanned: " + scannedString, Toast.LENGTH_SHORT).show();
-                String appId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-                Robot scannedRobot = new Robot(scannedString);
-                String registerResponse = scannedRobot.register(appId);
-
-                //if registering successful(server side), save the robots ID, IP address to shared prefs
-                if (registerResponse.equals("registered_successfully")) {
-                    Toast.makeText(this, "Robot registered", Toast.LENGTH_SHORT).show();
-                    PreferenceManager.getDefaultSharedPreferences(this).edit().putString("bob", scannedString).apply();
-                    model.addRobot(scannedRobot);
-                    //Might need to directly manipulate robots
-                    robotRecyclerViewAdapter.setData(model.getRobots().getValue());
+                AsyncTask.execute(() -> {
+                    model.addRobot(scannedString,"bob"); //"bob" is temporary, ask user for name
+                    //STATE IF ADDING FAILS HERE
 
 //                    LayoutInflater li = LayoutInflater.from(getApplicationContext());
 //                    AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
@@ -114,9 +123,8 @@ public class MainActivity extends AppCompatActivity {
 //                    });
 //                    AlertDialog alertDialog = builder.create();
 //                    alertDialog.show();
-                } else {
-                    Toast.makeText(this, "Failed to register robot", Toast.LENGTH_SHORT).show();
-                }
+                });
+                Log.d("IP",scannedString);
             } else {
                 Toast.makeText(this,"Not a valid QR code",Toast.LENGTH_SHORT).show();
             }
@@ -136,13 +144,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class RobotRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
+    public class RobotsAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         //RecyclerView dataset
-        private List<Robot> robots;
+        private List<Robot> data;
 
-        private RobotRecyclerViewAdapter(List<Robot> robots) {
-            this.robots = robots;
+        private RobotsAdapter(List<Robot> data) {
+            this.data = data;
         }
 
         @NonNull
@@ -159,10 +167,20 @@ public class MainActivity extends AppCompatActivity {
             //Replace the contents of the view with this element
 
             //Get robot and extract its details
-            Robot robot = robots.get(position);
+            Robot robot = data.get(position);
             holder.robotName.setText(robot.getName());
             GradientDrawable bgShape = (GradientDrawable) holder.robotState.getBackground();
-            bgShape.setColor(Color.BLACK);
+            switch (robot.getState()) {
+                case "idle":
+                    bgShape.setColor(Color.parseColor(String.valueOf(R.color.statusIdle)));
+                    break;
+                case "following":
+                    bgShape.setColor(Color.parseColor(String.valueOf(R.color.statusMoving)));
+                    break;
+                case "obstacle":
+                    bgShape.setColor(Color.parseColor(String.valueOf(R.color.statusObstacle)));
+                    break;
+            }
 
             holder.itemView.setOnClickListener(view -> {
                 FragmentManager fm = getSupportFragmentManager();
@@ -180,11 +198,11 @@ public class MainActivity extends AppCompatActivity {
         // Return the size of your dataset (invoked by the layout manager)
         @Override
         public int getItemCount() {
-            return robots.size();
+            return data.size();
         }
 
-        public void setData(List<Robot> robots) {
-            this.robots = robots;
+        public void setData(List<Robot> newData) {
+            this.data = newData;
             notifyDataSetChanged();
         }
 

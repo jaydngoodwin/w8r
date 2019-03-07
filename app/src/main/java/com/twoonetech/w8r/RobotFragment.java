@@ -21,23 +21,14 @@ import java.util.TimerTask;
 
 public class RobotFragment extends Fragment {
 
-    private Context mContext;
-
-    private SharedViewModel model;
     private String ip;
+    private SharedViewModel model;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
         ip = getArguments().getString("ip");
         model = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                model.updateRobot(ip);
-            }
-        },0,500);
     }
 
     @Override

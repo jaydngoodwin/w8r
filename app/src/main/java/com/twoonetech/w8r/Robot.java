@@ -25,6 +25,7 @@ public class Robot {
     private String destination;
     private List<String> tables;
     private String appId;
+    private String registered;
 
     public Robot(String ip) {
         this.ip = ip;
@@ -79,6 +80,22 @@ public class Robot {
         this.tables = tables;
     }
 
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public String getRegistered() {
+        return registered;
+    }
+
+    public void setRegistered(String registered) {
+        this.registered = registered;
+    }
+
     public void goToTable(String tableId) {
         httpRequest("go_to_table", new String[]{"id"}, new String[]{tableId}); //change id to tableId
     }
@@ -89,28 +106,36 @@ public class Robot {
 
     public void updateState(){
         JSONObject response = httpRequest("get_status", new String[]{}, new String[]{});
-        try {
-            state = response.getJSONObject("output").getString("status");
-        }
-        catch (Exception e){
-            Log.d("Robot",e.getLocalizedMessage());
+        if (response != null) {
+            try {
+                state = response.getJSONObject("output").getString("status");
+            } catch (Exception e) {
+                Log.d("Robot", e.getLocalizedMessage());
+            }
         }
     }
 
     public String register(String appId) {
         this.appId = appId;
-        //JSONObject response = httpRequest("register",new String[]{"appId"},new String[]{appId});;
-        //return response.toString();
-        return "registered_successfully";
+        JSONObject response = httpRequest("register",new String[]{"appId","password"},new String[]{appId,appId});
+        if (response != null) {
+            try {
+                return response.getString("output");
+            } catch (Exception e) {
+                Log.e("Robot", "Failed to register", e);
+            }
+        }
+        return null;
     }
 
     public void updateTables(){
         JSONObject response = httpRequest("get_tables", new String[]{}, new String[]{});
-        try {
-            tables = Arrays.asList(response.getString("output").split(" "));
-        }
-        catch (Exception e){
-            Log.d("Robot",e.getLocalizedMessage());
+        if (response != null) {
+            try {
+                tables = Arrays.asList(response.getString("output").split(" "));
+            } catch (Exception e) {
+                Log.e("Robot", "Failed to get tables", e);
+            }
         }
     }
 
@@ -139,7 +164,7 @@ public class Robot {
             response = new JSONObject(responseString);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Robot","HTTP request failed",e);
         }
         return response;
     }
