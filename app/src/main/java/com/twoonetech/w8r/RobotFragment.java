@@ -45,7 +45,7 @@ public class RobotFragment extends Fragment {
         Button returnToBar = view.findViewById(R.id.return_to_bar);
 
         //Observe live data from robots view model
-        model.getRobots().observe(this, robots -> {
+        model.getLiveRobots().observe(this, robots -> {
             Robot robot = model.getRobotWithIp(ip);
             if (robot != null) {
                 //If the robot data has been fetched

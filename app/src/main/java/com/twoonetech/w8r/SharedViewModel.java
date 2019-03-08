@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -54,17 +55,17 @@ public class SharedViewModel extends AndroidViewModel {
         //add to shared prefs
         //register?
         //use new AsyncTask<>() ?
-        robotsPrefs.edit().putString(ip, name.toString()).apply();
         Robot robot = new Robot(ip,name);
         String registerResponse = robot.register(Settings.Secure.getString(getApplication().getContentResolver(), Settings.Secure.ANDROID_ID));
-        if (registerResponse == "ok") {
+        //if (registerResponse == "ok") {
+            robotsPrefs.edit().putString(ip, name.toString()).apply();
             List<Robot> robots = this.robots.getValue();
             robots.add(robot);
             this.robots.postValue(robots); //post since this will be in a background thread
-        }
+        //}
     }
 
-    public LiveData<List<Robot>> getRobots() {
+    public LiveData<List<Robot>> getLiveRobots() {
         return robots;
     }
 

@@ -3,10 +3,13 @@ package com.twoonetech.w8r;
 import android.provider.Settings;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -20,7 +23,7 @@ public class Robot {
 
     private String ip;
     private String name;
-    private String state;
+    private String state = "idle";
     private String currentPosition;
     private String destination;
     private List<String> tables;
@@ -140,9 +143,9 @@ public class Robot {
     }
 
     private JSONObject httpRequest(String command, String[] args_names, String[] args_values) {
-        String datetime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date());
-        JSONObject response = null;
         try {
+            JSONObject response = null;
+            String datetime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date());
             JSONObject arguments = new JSONObject().put("name", command);
             for (int i = 0; i < args_names.length; i++) {
                 arguments.put(args_names[i], args_values[i]);
@@ -162,10 +165,16 @@ public class Robot {
                 responseString += line + "\n";
             }
             response = new JSONObject(responseString);
-
-        } catch (Exception e) {
-            Log.e("Robot","HTTP request failed",e);
+            return response;
+        } catch (JSONException e) {
+            Log.e("Robot","HTTP message or response could not be parsed",e);
+            return null;
+        } catch (ConnectException e) {
+            Log.e("Robot","HTTP connection could not be established",e);
+            return null;
+        } catch (IOException e) {
+            Log.e("Robot","Failed to read HTTP response",e);
+            return null;
         }
-        return response;
     }
 }

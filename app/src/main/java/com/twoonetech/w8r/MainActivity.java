@@ -1,16 +1,11 @@
 package com.twoonetech.w8r;
 
-import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -23,16 +18,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -69,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter
-        robotsAdapter = new RobotsAdapter(model.getRobots().getValue());
+        robotsAdapter = new RobotsAdapter(model.getLiveRobots().getValue());
         recyclerView.setAdapter(robotsAdapter);
 
         new Timer().scheduleAtFixedRate(new TimerTask() {
@@ -79,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
             }
         },0,1000);
 
-        model.getRobots().observe(this, robots -> {
-            robotsAdapter.setData(model.getRobots().getValue());
+        model.getLiveRobots().observe(this, robots -> {
+            robotsAdapter.setData(robots);
         });
 
         IntentIntegrator scanIntegrator = new IntentIntegrator(this)
@@ -131,23 +123,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView robotName;
-        private View robotState;
-
-        private ViewHolder(View view) {
-            super(view);
-            //Get views
-            robotName = view.findViewById(R.id.robot_name);
-            robotState = view.findViewById(R.id.robot_state);
-        }
-    }
-
-    public class RobotsAdapter extends RecyclerView.Adapter<ViewHolder> {
+    public class RobotsAdapter extends RecyclerView.Adapter<RobotsAdapter.RobotViewHolder> {
 
         //RecyclerView dataset
         private List<Robot> data;
+
+        public class RobotViewHolder extends RecyclerView.ViewHolder {
+
+            private TextView robotName;
+            private View robotState;
+
+            public RobotViewHolder(View view) {
+                super(view);
+                //Get views
+                robotName = view.findViewById(R.id.robot_name);
+                robotState = view.findViewById(R.id.robot_state);
+            }
+        }
 
         private RobotsAdapter(List<Robot> data) {
             this.data = data;
@@ -155,14 +147,14 @@ public class MainActivity extends AppCompatActivity {
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public RobotsAdapter.RobotViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             View view = inflater.inflate(R.layout.row_main, parent, false);
-            return new ViewHolder(view);
+            return new RobotViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull RobotViewHolder holder, final int position) {
             //Get element from the dataset at this position
             //Replace the contents of the view with this element
 
@@ -172,13 +164,16 @@ public class MainActivity extends AppCompatActivity {
             GradientDrawable bgShape = (GradientDrawable) holder.robotState.getBackground();
             switch (robot.getState()) {
                 case "idle":
-                    bgShape.setColor(Color.parseColor(String.valueOf(R.color.statusIdle)));
+                    //bgShape.setColor(Color.parseColor("#"+String.valueOf(R.color.statusIdle)));
+                    bgShape.setColor(Color.parseColor("green"));
                     break;
                 case "following":
-                    bgShape.setColor(Color.parseColor(String.valueOf(R.color.statusMoving)));
+                    //bgShape.setColor(Color.parseColor("#"+String.valueOf(R.color.statusMoving)));
+                    bgShape.setColor(Color.parseColor("yellow"));
                     break;
                 case "obstacle":
-                    bgShape.setColor(Color.parseColor(String.valueOf(R.color.statusObstacle)));
+                    //bgShape.setColor(Color.parseColor("#"+String.valueOf(R.color.statusObstacle)));
+                    bgShape.setColor(Color.parseColor("red"));
                     break;
             }
 
