@@ -144,7 +144,6 @@ public class Robot {
 
     private JSONObject httpRequest(String command, String[] args_names, String[] args_values) {
         try {
-            JSONObject response = null;
             String datetime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).format(new Date());
             JSONObject arguments = new JSONObject().put("name", command);
             for (int i = 0; i < args_names.length; i++) {
@@ -152,7 +151,7 @@ public class Robot {
             }
             JSONObject request = new JSONObject().put("timestamp", datetime).put("appId",appId).put("arguments", arguments);
             //This encodes the result string to UTF-8, so that it can be received correctly by the Pi.
-            Log.d("hi", request.toString());
+            Log.d("Robot Command", request.toString());
             String encodedJsonString = URLEncoder.encode(request.toString(), "UTF-8");
             URL url = new URL("http://"+ip+":5000/data?json=" + encodedJsonString);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -164,16 +163,15 @@ public class Robot {
             while ((line = reader.readLine()) != null) {
                 responseString += line + "\n";
             }
-            response = new JSONObject(responseString);
-            return response;
+            return new JSONObject(responseString);
         } catch (JSONException e) {
-            Log.e("Robot","HTTP message or response could not be parsed",e);
+            Log.e("Robot","HTTP message or response could not be parsed");
             return null;
         } catch (ConnectException e) {
-            Log.e("Robot","HTTP connection could not be established",e);
+            Log.e("Robot","HTTP connection could not be established");
             return null;
         } catch (IOException e) {
-            Log.e("Robot","Failed to read HTTP response",e);
+            Log.e("Robot","Failed to read HTTP response");
             return null;
         }
     }

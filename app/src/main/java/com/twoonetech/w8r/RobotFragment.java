@@ -41,8 +41,6 @@ public class RobotFragment extends Fragment {
         //Get views
         View state = view.findViewById(R.id.state);
         TextView stateText = view.findViewById(R.id.state_text);
-        Button goToTable = view.findViewById(R.id.go_to_table);
-        Button returnToBar = view.findViewById(R.id.return_to_bar);
 
         //Observe live data from robots view model
         model.getLiveRobots().observe(this, robots -> {
@@ -66,7 +64,13 @@ public class RobotFragment extends Fragment {
             }
         });
 
-        goToTable.setOnClickListener(view1 -> AsyncTask.execute(() -> model.getRobotWithIp(ip).goToTable("1")));
+        Button goToTable = view.findViewById(R.id.go_to_table);
+        Button returnToBar = view.findViewById(R.id.return_to_bar);
+
+        goToTable.setOnClickListener(view1 -> AsyncTask.execute(() -> {
+            model.getRobotWithIp(ip).goToTable("1");
+            Log.e("RobotFragment","go to table");
+        }));
 
         returnToBar.setOnClickListener(view1 -> AsyncTask.execute(() -> model.getRobotWithIp(ip).returnToBar()));
     }
