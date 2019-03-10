@@ -1,5 +1,6 @@
 package com.twoonetech.w8r;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -15,7 +17,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +28,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class RobotsFragment extends Fragment {
 
@@ -76,53 +75,16 @@ public class RobotsFragment extends Fragment {
             robotsAdapter.setData(robots);
         });
 
-//        IntentIntegrator scanIntegrator = new IntentIntegrator(getActivity()) {
-//            @Override
-//            protected void startActivityForResult(Intent intent, int code) {
-//                startActivityForResult(intent, 1); // REQUEST_CODE override
-//            }
-//        }
-//                .setBeepEnabled(true)
-//                .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
-//                .setBarcodeImageEnabled(true)
-//                .setOrientationLocked(false)
-//                .setPrompt("SCAN QR CODE");
+        IntentIntegrator scanIntegrator = new IntentIntegrator(getActivity())
+                .setBeepEnabled(true)
+                .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
+                .setBarcodeImageEnabled(true)
+                .setOrientationLocked(false)
+                .setPrompt("SCAN QR CODE");
         FloatingActionButton scanButton = view.findViewById(R.id.scan_button);
-        //scanButton.setOnClickListener(view1 -> scanIntegrator.initiateScan());
-        scanButton.setOnClickListener(view1 -> AsyncTask.execute(() -> model.addRobot("192.168.105.149","Tomasz")));
+        scanButton.setOnClickListener(view1 -> scanIntegrator.initiateScan());
+        //scanButton.setOnClickListener(view1 -> AsyncTask.execute(() -> model.addRobot("192.168.105.149","Tomasz")));
     }
-
-    //when the camera has scanned something this will be executed
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-//        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-//        if (scanResult != null) {
-//            String scannedString = scanResult.getContents();
-//            Log.d("IP",scannedString);
-//            if (scannedString != null && isValidIp(scannedString)) {
-//                Toast.makeText(getActivity(), "Scanned: " + scannedString, Toast.LENGTH_SHORT).show();
-////                AsyncTask.execute(() -> {
-////
-////                    LayoutInflater li = LayoutInflater.from(getActivity());
-////                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-////                    View dialogView = li.inflate(R.layout.dialog_robot_name, null);
-////                    builder.setView(dialogView);
-////                    EditText robotName = dialogView.findViewById(R.id.robot_name);
-////                    builder.setPositiveButton("SET", (dialogInterface, i) -> {
-////                        model.addRobot(scannedString,robotName.toString());
-////                        //STATE IF ADDING FAILS HERE
-////                    });
-////                    AlertDialog alertDialog = builder.create();
-////                    alertDialog.show();
-////                });
-//
-//                Log.e("RobotsFragment",scannedString);
-//                model.addRobot(scannedString,"jimbo");
-//            } else {
-//                Toast.makeText(getActivity(),"Not a valid QR code",Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
 
     public class RobotsAdapter extends RecyclerView.Adapter<RobotsAdapter.RobotViewHolder> {
 
