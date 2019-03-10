@@ -37,20 +37,6 @@ public class RobotsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-//        model = ViewModelProviders.of(this).get(SharedViewModel.class);
-//        model.addRobot(new Robot("192.169.105.149"));
-//
-//        FragmentManager fm = getSupportFragmentManager();
-//
-//        Bundle args = new Bundle();
-//        args.putString("ip","192.169.105.149");
-//        RobotFragment robotFragment = new RobotFragment();
-//        robotFragment.setArguments(args);
-//
-//        FragmentTransaction ft = fm.beginTransaction();
-//        ft.replace(R.id.fragment_container,robotFragment).commit();
-
         model = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
     }
 
@@ -83,7 +69,6 @@ public class RobotsFragment extends Fragment {
                 .setPrompt("SCAN QR CODE");
         FloatingActionButton scanButton = view.findViewById(R.id.scan_button);
         scanButton.setOnClickListener(view1 -> scanIntegrator.initiateScan());
-        //scanButton.setOnClickListener(view1 -> AsyncTask.execute(() -> model.addRobot("192.168.105.149","Tomasz")));
     }
 
     public class RobotsAdapter extends RecyclerView.Adapter<RobotsAdapter.RobotViewHolder> {
@@ -164,32 +149,5 @@ public class RobotsFragment extends Fragment {
             notifyDataSetChanged();
         }
 
-    }
-
-    public static boolean isValidIp (String ip) {
-        try {
-            if (ip == null || ip.isEmpty()) {
-                return false;
-            }
-
-            String[] parts = ip.split( "\\." );
-            if (parts.length != 4) {
-                return false;
-            }
-
-            for (String s : parts) {
-                int i = Integer.parseInt( s );
-                if ( (i < 0) || (i > 255) ) {
-                    return false;
-                }
-            }
-            if (ip.endsWith(".")) {
-                return false;
-            }
-
-            return true;
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
     }
 }

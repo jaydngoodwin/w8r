@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -63,13 +64,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 List<Robot> robots = model.getLiveRobots().getValue();
-                for (Robot robot : robots) {
-                    robot.updateState();
-                    if (robot.getTables() == null) {
-                        robot.updateTables();
+                if (!robots.isEmpty()) {
+                    for (Robot robot : robots) {
+                        robot.updateState();
+                        if (robot.getTables() == null) {
+                            robot.updateTables();
+                        }
                     }
+                    model.getLiveRobots().postValue(robots);
                 }
-                model.getLiveRobots().postValue(robots);
             }
         },0,1000);
     }
@@ -89,13 +92,15 @@ public class MainActivity extends AppCompatActivity {
                     builder.setPositiveButton("SET", (dialogInterface, i) -> {
                         AsyncTask.execute(() -> {
                             Robot robot = new Robot(scannedString,robotName.getText().toString());
-                            String registerResponse = robot.register(Settings.Secure.getString(getApplication().getContentResolver(), Settings.Secure.ANDROID_ID));
+                            String registerResponse = robot.register(Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID));
                             if (registerResponse != null && registerResponse.equals("ok")) {
                                 PreferenceManager.getDefaultSharedPreferences(this).edit().putString(scannedString, robotName.getText().toString()).apply();
                                 List<Robot> robots = model.getLiveRobots().getValue();
                                 robots.add(robot);
                                 model.getLiveRobots().postValue(robots); //post since this will be in a background thread
+                                Log.e("MainActivity", "robot was registered");
                             } else {
+                                Log.e("MainActivity", "robot isn't turned on or doesn't exist");
                                 Handler handler = new Handler(this.getMainLooper());
                                 handler.post(() -> Toast.makeText(this, "Robot isn't turned on or doesn't exist",Toast.LENGTH_LONG).show());
                             }

@@ -155,7 +155,8 @@ public class Robot {
             String encodedJsonString = URLEncoder.encode(request.toString(), "UTF-8");
             URL url = new URL("http://"+ip+":5000/data?json=" + encodedJsonString);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("GET");  //timeout?
+            httpURLConnection.setRequestMethod("GET");
+            httpURLConnection.setConnectTimeout(2000);
 
             String responseString = "";
             BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
