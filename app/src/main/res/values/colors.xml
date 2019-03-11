@@ -4,7 +4,4 @@
     <color name="colorPrimaryDark">#0fa6b2</color>
     <color name="colorAccent">#ef8729</color>
     <color name="colorAccentDark">#d1752a</color>
-    <color name="statusObstacle">#ff140c</color>
-    <color name="statusMoving">#ff9500</color>
-    <color name="statusIdle">#29ff11</color>
 </resources>

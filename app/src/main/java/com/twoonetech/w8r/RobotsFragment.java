@@ -15,11 +15,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +58,8 @@ public class RobotsFragment extends Fragment {
         // specify an adapter
         robotsAdapter = new RobotsAdapter(model.getLiveRobots().getValue());
         recyclerView.setAdapter(robotsAdapter);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(),layoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
 
         model.getLiveRobots().observe(this, robots -> {
             robotsAdapter.setData(robots);
@@ -67,8 +71,16 @@ public class RobotsFragment extends Fragment {
                 .setBarcodeImageEnabled(true)
                 .setOrientationLocked(false)
                 .setPrompt("SCAN QR CODE");
-        FloatingActionButton scanButton = view.findViewById(R.id.scan_button);
+        Button scanButton = view.findViewById(R.id.scan_button);
         scanButton.setOnClickListener(view1 -> scanIntegrator.initiateScan());
+
+        Button helpButton = view.findViewById(R.id.help_button);
+        helpButton.setOnClickListener(view12 -> {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            HelpFragment helpFragment = new HelpFragment();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.fragment_container,helpFragment).addToBackStack("help").commit();
+        });
     }
 
     public class RobotsAdapter extends RecyclerView.Adapter<RobotsAdapter.RobotViewHolder> {
@@ -79,7 +91,7 @@ public class RobotsFragment extends Fragment {
         public class RobotViewHolder extends RecyclerView.ViewHolder {
 
             private TextView robotName;
-            private View robotState;
+            private TextView robotState;
 
             public RobotViewHolder(View view) {
                 super(view);
@@ -109,19 +121,15 @@ public class RobotsFragment extends Fragment {
             //Get robot and extract its details
             Robot robot = data.get(position);
             holder.robotName.setText(robot.getName());
-            GradientDrawable bgShape = (GradientDrawable) holder.robotState.getBackground();
             switch (robot.getState()) {
                 case "idle":
-                    //bgShape.setColor(Color.parseColor("#"+String.valueOf(R.color.statusIdle)));
-                    bgShape.setColor(Color.parseColor("green"));
+                    holder.robotState.setText(robot.getState());
                     break;
                 case "following":
-                    //bgShape.setColor(Color.parseColor("#"+String.valueOf(R.color.statusMoving)));
-                    bgShape.setColor(Color.parseColor("yellow"));
+                    holder.robotState.setText(robot.getState());
                     break;
                 case "obstacle":
-                    //bgShape.setColor(Color.parseColor("#"+String.valueOf(R.color.statusObstacle)));
-                    bgShape.setColor(Color.parseColor("red"));
+                    holder.robotState.setText(robot.getState());
                     break;
             }
 

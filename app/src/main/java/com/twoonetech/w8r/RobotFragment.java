@@ -7,11 +7,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -38,9 +41,15 @@ public class RobotFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState){
-        //Get views
-        View state = view.findViewById(R.id.state);
-        TextView stateText = view.findViewById(R.id.state_text);
+        Button backButton = view.findViewById(R.id.back_button);
+        backButton.setOnClickListener(view1 -> {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            RobotsFragment robotsFragment = new RobotsFragment();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.fragment_container,robotsFragment).addToBackStack("robots").commit();
+        });
+
+        ImageView state = view.findViewById(R.id.state);
 
         //Observe live data from robots view model
         model.getLiveRobots().observe(this, robots -> {
@@ -49,16 +58,13 @@ public class RobotFragment extends Fragment {
                 //If the robot data has been fetched
                 switch (robot.getState()) {
                     case "idle":
-                        state.setBackgroundColor(Color.parseColor("#29ff11"));
-                        stateText.setText("IDLE");
+                        state.setBackgroundResource(R.mipmap.idle_status);
                         break;
                     case "following":
-                        state.setBackgroundColor(Color.parseColor("#ff9500"));
-                        stateText.setText("FOLLOWING");
+                        state.setBackgroundResource(R.mipmap.serving_status);
                         break;
                     case "obstacle":
-                        state.setBackgroundColor(Color.parseColor("#ff140c"));
-                        stateText.setText("OBSTACLE");
+                        state.setBackgroundResource(R.mipmap.fallen_status);
                         break;
                 }
             }
@@ -67,10 +73,7 @@ public class RobotFragment extends Fragment {
         Button goToTable = view.findViewById(R.id.go_to_table);
         Button returnToBar = view.findViewById(R.id.return_to_bar);
 
-        goToTable.setOnClickListener(view1 -> AsyncTask.execute(() -> {
-            model.getRobotWithIp(ip).goToTable("1");
-            Log.e("RobotFragment","go to table");
-        }));
+        goToTable.setOnClickListener(view1 -> AsyncTask.execute(() -> model.getRobotWithIp(ip).goToTable("1")));
 
         returnToBar.setOnClickListener(view1 -> AsyncTask.execute(() -> model.getRobotWithIp(ip).returnToBar()));
     }
