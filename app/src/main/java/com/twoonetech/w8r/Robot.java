@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +27,7 @@ public class Robot {
     private String state = "idle";
     private String currentPosition;
     private String destination;
-    private List<String> tables;
+    private List<String> tables = new ArrayList<>();
     private String appId;
     private String registered;
 
@@ -99,8 +100,16 @@ public class Robot {
         this.registered = registered;
     }
 
-    public void goToTable(String tableId) {
-        httpRequest("go_to_table", new String[]{"id"}, new String[]{tableId}); //change id to tableId
+    public String goToTable(String tableId) {
+        JSONObject response = httpRequest("go_to_table", new String[]{"id"}, new String[]{tableId}); //change id to tableId
+        if (response != null) {
+            try {
+                return response.getString("output");
+            } catch (Exception e) {
+                Log.e("Robot", "Failed to register", e);
+            }
+        }
+        return null;
     }
 
     public void returnToBar() {

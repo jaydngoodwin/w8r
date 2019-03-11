@@ -1,17 +1,9 @@
 package com.twoonetech.w8r;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,12 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import java.util.List;
 
@@ -81,6 +70,14 @@ public class RobotsFragment extends Fragment {
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.fragment_container,helpFragment).addToBackStack("help").commit();
         });
+
+//        Button mapButton = view.findViewById(R.id.map_button);
+//        mapButton.setOnClickListener(view12 -> {
+//            FragmentManager fm = getActivity().getSupportFragmentManager();
+//            MapFragment mapFragment = new MapFragment();
+//            FragmentTransaction ft = fm.beginTransaction();
+//            ft.replace(R.id.fragment_container,mapFragment).addToBackStack("help").commit();
+//        });
     }
 
     public class RobotsAdapter extends RecyclerView.Adapter<RobotsAdapter.RobotViewHolder> {

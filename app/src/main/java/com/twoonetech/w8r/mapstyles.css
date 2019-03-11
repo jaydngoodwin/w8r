@@ -1,0 +1,35 @@
+/* Insert styles for the graph here */
+graph {
+
+}
+
+/* Insert styles for edges here */
+edge {
+    size: 5px;
+    fill-color: #000000;
+}
+
+/* Insert styles for all nodes here */
+node {
+    size: 25px, 25px;
+    fill-color: #000000;
+}
+
+/* Insert styles for w8rs here */
+node.w8r {
+    /* If you can find a way to get the url thingy working,
+       you can use it to make w8rs and other things have a nice image */
+    /*fill-image: url("potato.jpeg");*/
+    shape: diamond;
+}
+
+/* Insert styles for tables here */
+node.table {
+    shape: box;
+    fill-color: #fc1622;
+}
+
+/* Insert styles for intersections here */
+node.intersection {
+
+}

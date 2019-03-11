@@ -177,8 +177,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/go_to_table" />
 
-    <View
-        android:id="@+id/view3"
+    <FrameLayout
+        android:id="@+id/map_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"

@@ -4,24 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EdgeObject {
-    private int id;
-    private int[] nodes;
+    private String id;
+    private List<Integer> nodes = new ArrayList<>();
     private double length;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public int[] getNodes() {
+    public List<Integer> getNodes() {
         return nodes;
     }
 
-    public void addNodes(int[] nodes) {
-        this.nodes = nodes;
+//    public void addNodes(NodeObject[] nodes) {
+//        this.nodes = new ArrayList<>();
+//    }
+
+    public void addNode(Integer node) {
+        this.nodes.add(node);
     }
 
     public double getLength() {

@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!robots.isEmpty()) {
                     for (Robot robot : robots) {
                         robot.updateState();
-                        if (robot.getTables() == null) {
+                        if (robot.getTables().isEmpty()) {
                             robot.updateTables();
                         }
                     }
@@ -93,17 +93,15 @@ public class MainActivity extends AppCompatActivity {
                         AsyncTask.execute(() -> {
                             Robot robot = new Robot(scannedString,robotName.getText().toString());
                             String registerResponse = robot.register(Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID));
-                            //if (registerResponse != null && registerResponse.equals("ok")) {
+                            if (registerResponse != null && registerResponse.equals("ok")) {
                                 PreferenceManager.getDefaultSharedPreferences(this).edit().putString(scannedString, robotName.getText().toString()).apply();
                                 List<Robot> robots = model.getLiveRobots().getValue();
                                 robots.add(robot);
                                 model.getLiveRobots().postValue(robots); //post since this will be in a background thread
-                                Log.e("MainActivity", "robot was registered");
-//                            } else {
-//                                Log.e("MainActivity", "robot isn't turned on or doesn't exist");
-//                                Handler handler = new Handler(this.getMainLooper());
-//                                handler.post(() -> Toast.makeText(this, "Robot isn't turned on or doesn't exist",Toast.LENGTH_LONG).show());
-//                            }
+                            } else {
+                                Handler handler = new Handler(this.getMainLooper());
+                                handler.post(() -> Toast.makeText(this, "Robot isn't turned on",Toast.LENGTH_LONG).show());
+                            }
                         });
                     });
                     AlertDialog alertDialog = builder.create();
