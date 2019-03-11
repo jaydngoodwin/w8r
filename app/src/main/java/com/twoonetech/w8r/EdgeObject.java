@@ -3,7 +3,7 @@ package com.twoonetech.w8r;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Edge {
+public class EdgeObject {
     private int id;
     private int[] nodes;
     private double length;

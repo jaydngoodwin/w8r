@@ -3,7 +3,7 @@ package com.twoonetech.w8r;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node {
+public class NodeObject {
 
     private int id;
     private int[] neighbours;
