@@ -68,16 +68,8 @@ public class RobotsFragment extends Fragment {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             HelpFragment helpFragment = new HelpFragment();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fragment_container,helpFragment).addToBackStack("help").commit();
+            ft.replace(R.id.fragment_container,helpFragment).addToBackStack(null).commit();
         });
-
-//        Button mapButton = view.findViewById(R.id.map_button);
-//        mapButton.setOnClickListener(view12 -> {
-//            FragmentManager fm = getActivity().getSupportFragmentManager();
-//            MapFragment mapFragment = new MapFragment();
-//            FragmentTransaction ft = fm.beginTransaction();
-//            ft.replace(R.id.fragment_container,mapFragment).addToBackStack("help").commit();
-//        });
     }
 
     public class RobotsAdapter extends RecyclerView.Adapter<RobotsAdapter.RobotViewHolder> {
@@ -139,7 +131,7 @@ public class RobotsFragment extends Fragment {
                 robotFragment.setArguments(args);
 
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.fragment_container,robotFragment).addToBackStack("robot").commit();
+                ft.replace(R.id.fragment_container,robotFragment).addToBackStack(null).commit();
             });
         }
 

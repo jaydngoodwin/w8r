@@ -26,7 +26,7 @@ public class HelpFragment extends Fragment {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             RobotsFragment robotsFragment = new RobotsFragment();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fragment_container,robotsFragment).addToBackStack("robots").commit();
+            ft.replace(R.id.fragment_container,robotsFragment).addToBackStack(null).commit();
         });
     }
 
