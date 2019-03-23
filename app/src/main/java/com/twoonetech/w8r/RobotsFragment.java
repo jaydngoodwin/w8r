@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import org.graphstream.ui.android_viewer.util.DefaultFragment;
+
 import java.util.List;
 
 public class RobotsFragment extends Fragment {
@@ -50,9 +52,7 @@ public class RobotsFragment extends Fragment {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(),layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        model.getLiveRobots().observe(this, robots -> {
-            robotsAdapter.setData(robots);
-        });
+        model.getLiveRobots().observe(this, robots -> robotsAdapter.setData(robots));
 
         IntentIntegrator scanIntegrator = new IntentIntegrator(getActivity())
                 .setBeepEnabled(true)

@@ -395,8 +395,8 @@ public class MapFragment extends Fragment {
             "\n" +
             "}";
 
-    private AndroidViewer viewer = null ;
-    private AndroidFullGraphRenderer renderer ;
+    private AndroidViewer viewer = null;
+    private AndroidFullGraphRenderer renderer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -425,8 +425,17 @@ public class MapFragment extends Fragment {
         renderer.setContext(context);
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return (DefaultView) viewer.addView(AndroidViewer.DEFAULT_VIEW_ID, renderer);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        renderer.close();
+        viewer.close();
+        viewer.removeView(AndroidViewer.DEFAULT_VIEW_ID);
     }
 
     public Graph createGraph(String gName) {
