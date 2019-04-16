@@ -16,62 +16,41 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="51dp"
-        android:fontFamily="@font/anton"
-        android:text="Dashboard"
-        android:textColor="@color/colorPrimary"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toBottomOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.602"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/back_button"
         android:layout_width="62dp"
         android:layout_height="49dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@mipmap/button"
         android:backgroundTint="@color/colorAccent"
-        android:fontFamily="@font/anton"
-        android:gravity="center|bottom"
-        android:text="Back"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:text="\n Back"
+        android:textAllCaps="false"
         android:textColor="#ffffff"
-        android:textSize="20sp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toTopOf="@+id/view" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="38dp"
-        android:layout_height="0dp"
-        android:tint="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintEnd_toStartOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="@+id/textView"
-        app:srcCompat="@mipmap/robot_icon" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintGuide_percent="0.4" />
 
     <ImageView
         android:id="@+id/state"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="64dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="16dp"
         android:adjustViewBounds="true"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
@@ -85,15 +64,17 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.25" />
 
-    <View
-        android:id="@+id/view2"
+    <ListView
+        android:id="@+id/log"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#ffffff"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline4" />
+        app:layout_constraintTop_toTopOf="@+id/guideline4"
+        app:layout_constraintVertical_bias="0.0" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline5"
@@ -106,90 +87,141 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:fontFamily="@font/anton"
         android:text="Control Panel"
         android:textColor="#ffffff"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline7"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view2" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="115dp" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.625" />
+        app:layout_constraintTop_toBottomOf="@+id/log" />
 
     <Button
         android:id="@+id/go_to_table"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@mipmap/button"
         android:backgroundTint="@color/colorAccent"
-        android:fontFamily="@font/anton"
-        android:gravity="center|bottom"
-        android:text="Go  to  table"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:text="\nGo to \ntable"
         android:textAlignment="center"
+        android:textAllCaps="false"
         android:textColor="#ffffff"
-        android:textSize="21sp"
-        app:layout_constraintBottom_toTopOf="@+id/return_to_bar"
-        app:layout_constraintEnd_toStartOf="@+id/guideline6"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/add_map"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideline7" />
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <Button
-        android:id="@+id/return_to_bar"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:id="@+id/add_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@mipmap/button"
         android:backgroundTint="@color/colorAccent"
-        android:fontFamily="@font/anton"
-        android:gravity="center|bottom"
-        android:text="Return to bar"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:text="\nAssign\nMap"
         android:textAlignment="center"
+        android:textAllCaps="false"
         android:textColor="#ffffff"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline6"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/go_to_table" />
+        app:layout_constraintStart_toEndOf="@+id/go_to_table"
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <FrameLayout
         android:id="@+id/map_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="64dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
+        android:background="#ffffff"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/add_map_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="#ffffff"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline6"
-        app:layout_constraintTop_toTopOf="@+id/guideline7" />
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Assign map"
+        android:textColor="#D3D3D3"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/map_container"
+        app:layout_constraintEnd_toEndOf="@+id/map_container"
+        app:layout_constraintStart_toStartOf="@+id/map_container"
+        app:layout_constraintTop_toTopOf="@+id/map_container" />
 
+    <TextView
+        android:id="@+id/inactive_robot_text_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Robot is not turned on"
+        android:textColor="#D3D3D3"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/map_container"
+        app:layout_constraintEnd_toEndOf="@+id/map_container"
+        app:layout_constraintStart_toStartOf="@+id/map_container"
+        app:layout_constraintTop_toTopOf="@+id/map_container" />
+
+    <TextView
+        android:id="@+id/inactive_robot_text_log"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Robot is not turned on"
+        android:textColor="#D3D3D3"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/log"
+        app:layout_constraintEnd_toEndOf="@+id/log"
+        app:layout_constraintStart_toStartOf="@+id/log"
+        app:layout_constraintTop_toTopOf="@+id/log" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="100dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view"
+        app:srcCompat="@mipmap/dashboardtitle" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp"
+        app:layout_constraintGuide_percent="0.80" />
 
 </android.support.constraint.ConstraintLayout>

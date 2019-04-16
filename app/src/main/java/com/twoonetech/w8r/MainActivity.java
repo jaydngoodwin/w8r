@@ -1,30 +1,14 @@
 package com.twoonetech.w8r;
 
-import android.app.AlertDialog;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
-
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -33,7 +17,6 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
     private SharedViewModel model;
-    private SharedPreferences robotsPrefs;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,24 +24,41 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         model = ViewModelProviders.of(this).get(SharedViewModel.class);
-        robotsPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        Map<String,String> mapNames = new HashMap<>();
+        mapNames.put("Demo Map Small","{\"nodes\":[{\"name\":\"Bar\",\"x\":\"0\",\"y\":\"-1\",\"type\":\"table\"},{\"name\":\"Initial Node\",\"x\":\"0\",\"y\":\"0\",\"type\":\"intersection\" },{\"name\":\"1\",\"x\":\"0\",\"y\":\"1\",\"type\":\"table\"},{\"name\":\"f\",\"x\":\"1\",\"y\":\"0\",\"type\":\"intersection\"},{\"name\":\"2\",\"x\":\"2\",\"y\":\"0\",\"type\":\"table\"},{ \"name\":\"a\",\"x\":\"-1\",\"y\":\"0\",\"type\":\"intersection\"},{\"name\":\"b\",\"x\":\"-1\",\"y\":\"2\",\"type\":\"intersection\"},{\"name\":\"d\",\"x\":\"1\",\"y\":\"2\",\"type\":\"intersection\"},{\"name\":\"e\",\"x\":\"2\",\"y\":\"2\",\"type\":\"intersection\"},{\"name\":\"3\",\"x\":\"2\",\"y\":\"3\",\"type\":\"table\"},{\"name\":\"c\",\"x\":\"-1\",\"y\":\"3\",\"type\":\"intersection\"},{\"name\":\"4\",\"x\":\"-2\",\"y\":\"3\",\"type\":\"table\"}],\"edges\":[{\"node1\":\"Bar\",\"node2\":\"Initial Node\"},{\"node1\":\"1\",\"node2\":\"Initial Node\"},{\"node1\":\"Initial Node\",\"node2\":\"f\"},{\"node1\":\"f\",\"node2\":\"2\"},{\"node1\":\"Initial Node\",\"node2\":\"a\"},{\"node1\":\"a\",\"node2\":\"b\"},{\"node1\":\"b\",\"node2\":\"c\"},{\"node1\":\"c\",\"node2\":\"4\"},{\"node1\":\"f\",\"node2\":\"d\"},{\"node1\":\"d\",\"node2\":\"b\"},{\"node1\":\"d\",\"node2\":\"e\"},{\"node1\":\"e\",\"node2\":\"3\"}]}");
+
+        mapNames.put("Demo Map Large","{\"nodes\":[{\"name\":\"Bar\",\"x\":\"0\",\"y\":\"-1\",\"type\":\"table\"},{\"name\":\"a\",\"x\":\"0\",\"y\":\"0\",\"type\":\"intersection\" },{\"name\":\"b\",\"x\":\"-1\",\"y\":\"0\",\"type\":\"intersection\"},{\"name\":\"c\",\"x\":\"-2\",\"y\":\"0\",\"type\":\"intersection\"},{ \"name\":\"d\",\"x\":\"1\",\"y\":\"0\",\"type\":\"intersection\"},{\"name\":\"e\",\"x\":\"2\",\"y\":\"0\",\"type\":\"intersection\"},{\"name\":\"f\",\"x\":\"2\",\"y\":\"-1\",\"type\":\"intersection\"},{\"name\":\"1\",\"x\":\"-2\",\"y\":\"-1\",\"type\":\"table\"},{\"name\":\"2\",\"x\":\"-3\",\"y\":\"0\",\"type\":\"table\"},{\"name\":\"3\",\"x\":\"-2\",\"y\":\"1\",\"type\":\"table\"},{\"name\":\"4\",\"x\":\"-1\",\"y\":\"1\",\"type\":\"table\"},{\"name\":\"5\",\"x\":\"1\",\"y\":\"1\",\"type\":\"table\"},{\"name\":\"6\",\"x\":\"1\",\"y\":\"-1\",\"type\":\"table\"}],\"edges\":[{\"node1\":\"Bar\",\"node2\":\"a\"},{\"node1\":\"a\",\"node2\":\"b\"},{\"node1\":\"b\",\"node2\":\"c\"},{\"node1\":\"a\",\"node2\":\"d\"},{\"node1\":\"d\",\"node2\":\"e\"},{\"node1\":\"e\",\"node2\":\"f\"},{\"node1\":\"b\",\"node2\":\"4\"},{\"node1\":\"c\",\"node2\":\"1\"},{\"node1\":\"c\",\"node2\":\"2\"},{\"node1\":\"c\",\"node2\":\"3\"},{\"node1\":\"d\",\"node2\":\"5\"},{\"node1\":\"f\",\"node2\":\"6\"}]}");
+
+        Map<String,?> mapNamesPrefsEntries = getSharedPreferences("MapNamesPrefs",MODE_PRIVATE).getAll();
+        for (Map.Entry<String,?> entry : mapNamesPrefsEntries.entrySet()) {
+            mapNames.put(entry.getKey(),entry.getValue().toString());
+        }
+        model.getLiveMaps().setValue(mapNames);
 
         List<Robot> robots = new ArrayList<>();
-        Map<String,String> ipNameMap = (Map<String,String>) robotsPrefs.getAll();
-        Iterator it = ipNameMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            robots.add(new Robot((String) pair.getKey(),(String) pair.getValue()));
-            it.remove(); // avoids a ConcurrentModificationException
+
+        Map<String,?> robotNamesPrefsEntries = getSharedPreferences("RobotNamesPrefs",MODE_PRIVATE).getAll();
+        Map<String,?> robotMapJsonsPrefsEntries = getSharedPreferences("RobotMapJsonsPrefs",MODE_PRIVATE).getAll();
+        for (Map.Entry<String,?> nameEntry : robotNamesPrefsEntries.entrySet()) {
+            Robot robot = new Robot(nameEntry.getKey(),nameEntry.getValue().toString());
+            for (Map.Entry<String,?> mapEntry : robotMapJsonsPrefsEntries.entrySet()) {
+                if (nameEntry.getKey().equals(mapEntry.getKey())) {
+                    robot.setMapJson(mapEntry.getValue().toString());
+                    break;
+                }
+            }
+            robots.add(robot);
         }
-        model.getLiveRobots().setValue(robots); //set since this will NOT be in a background thread
+
+        model.getLiveRobots().setValue(robots);
+
+        //ALSO SAVE APPID?
 
         FragmentManager fm = getSupportFragmentManager();
 
-        RobotsFragment robotsFragment = new RobotsFragment();
-
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fragment_container,robotsFragment).commit();
+        ft.replace(R.id.fragment_container,new RobotsFragment()).commit();
 
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -66,79 +66,12 @@ public class MainActivity extends AppCompatActivity {
                 List<Robot> robots = model.getLiveRobots().getValue();
                 if (!robots.isEmpty()) {
                     for (Robot robot : robots) {
-                        robot.updateState();
-                        if (robot.getTables().isEmpty()) {
-                            robot.updateTables();
-                        }
+                        robot.updateStatus();
                     }
                     model.getLiveRobots().postValue(robots);
                 }
             }
         },0,1000);
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-        if (scanResult != null) {
-            String scannedString = scanResult.getContents();
-            if (scannedString != null && isValidIp(scannedString)) {
-                if (model.getRobotWithIp(scannedString) == null) {
-                    LayoutInflater li = LayoutInflater.from(this);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    View dialogView = li.inflate(R.layout.dialog_robot_name, null);
-                    builder.setView(dialogView);
-                    EditText robotName = dialogView.findViewById(R.id.robot_name);
-                    builder.setPositiveButton("SET", (dialogInterface, i) -> {
-                        AsyncTask.execute(() -> {
-                            Robot robot = new Robot(scannedString,robotName.getText().toString());
-                            String registerResponse = robot.register(Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID));
-                            if (registerResponse != null && registerResponse.equals("ok")) {
-                                PreferenceManager.getDefaultSharedPreferences(this).edit().putString(scannedString, robotName.getText().toString()).apply();
-                                List<Robot> robots = model.getLiveRobots().getValue();
-                                robots.add(robot);
-                                model.getLiveRobots().postValue(robots); //post since this will be in a background thread
-                            } else {
-                                Handler handler = new Handler(this.getMainLooper());
-                                handler.post(() -> Toast.makeText(this, "Robot isn't turned on",Toast.LENGTH_LONG).show());
-                            }
-                        });
-                    });
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                } else {
-                    Toast.makeText(this, "Robot already registered", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(this,"Not a valid QR code",Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    public static boolean isValidIp (String ip) {
-        try {
-            if (ip == null || ip.isEmpty()) {
-                return false;
-            }
-
-            String[] parts = ip.split( "\\." );
-            if (parts.length != 4) {
-                return false;
-            }
-
-            for (String s : parts) {
-                int i = Integer.parseInt( s );
-                if ( (i < 0) || (i > 255) ) {
-                    return false;
-                }
-            }
-            if (ip.endsWith(".")) {
-                return false;
-            }
-
-            return true;
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
     }
 }

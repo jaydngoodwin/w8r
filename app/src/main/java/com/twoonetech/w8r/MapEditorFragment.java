@@ -1,12 +1,11 @@
 package com.twoonetech.w8r;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,9 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-
-public class MapFragment extends Fragment {
+public class MapEditorFragment extends Fragment {
 
     //Find a way to connect the css file instead of using a string
     String styleString = "graph {\n" +
@@ -61,6 +58,9 @@ public class MapFragment extends Fragment {
             "    text-size: 30;\n" +
             "    text-style: bold;\n" +
             "    text-color: #000000;\n" +
+//            "    text-background-mode: plain;\n" +
+//            "    text-background-color: #000000;\n" +
+//            "    text-padding: 20;\n" +
             "}\n" +
             "\n" +
             "/* Insert styles for intersections here */\n" +
@@ -72,11 +72,13 @@ public class MapFragment extends Fragment {
             "    text-size: 30;\n" +
             "    text-style: bold;\n" +
             "    text-color: #000000;\n" +
+//            "    text-background-mode: plain;\n" +
+//            "    text-background-color: #000000;\n" +
+//            "    text-padding: 20;\n" +
             "}";
 
     private FragmentActivity mContext;
-    private SharedViewModel model;
-    private String ip;
+    private String mapJson;
     private AndroidViewer viewer;
     private AndroidFullGraphRenderer renderer;
     private DefaultView vw;
@@ -85,13 +87,13 @@ public class MapFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = (FragmentActivity) context;
-        model = ViewModelProviders.of(mContext).get(SharedViewModel.class);
-        ip = getArguments().getString("ip");
+        mapJson = getArguments().getString("mapJson");
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Graph graph;
         graph = new SingleGraph("map");
         renderer = new AndroidFullGraphRenderer();
@@ -99,7 +101,7 @@ public class MapFragment extends Fragment {
         viewer = new AndroidViewer(graph, AndroidViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
         graph.setAttribute("ui.stylesheet", styleString); //Add stylesheet to the graph
         try {
-            JSONObject mapJsonObject = new JSONObject(model.getRobotWithIp(ip).getMapJson());
+            JSONObject mapJsonObject = new JSONObject(mapJson);
 
             JSONArray nodesJsonArray = mapJsonObject.getJSONArray("nodes");
             for (int i = 0; i < nodesJsonArray.length(); i++) {
@@ -116,11 +118,6 @@ public class MapFragment extends Fragment {
             for (int i = 0; i < edgesJsonArray.length(); i++) {
                 JSONObject edgeJson = edgesJsonArray.getJSONObject(i);
                 graph.addEdge("edge"+String.valueOf(i),edgeJson.getString("node1"),edgeJson.getString("node2"));
-                String activeEdge = model.getRobotWithIp(ip).getCurrentEdge();
-                if (activeEdge != null && activeEdge.equals("edge"+String.valueOf(i))) {
-                    Edge activeEdgeGS = graph.getEdge(activeEdge);
-                    activeEdgeGS.setAttribute("ui.class","active");
-                }
             }
         } catch (JSONException e) {
             Log.e("MapFragment","Failed to create map");

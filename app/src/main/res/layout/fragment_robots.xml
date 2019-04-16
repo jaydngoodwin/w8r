@@ -17,21 +17,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="77dp"
-        android:fontFamily="@font/anton"
-        android:text="W8r"
-        android:textColor="@color/colorPrimary"
-        android:textSize="55sp"
-        app:layout_constraintBottom_toBottomOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent" />
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="128dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="128dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view"
+        app:srcCompat="@mipmap/mainmenutitle" />
 
     <Button
-        android:id="@+id/scan_button"
+        android:id="@+id/map_button"
         android:layout_width="62dp"
         android:layout_height="49dp"
         android:layout_marginBottom="8dp"
@@ -39,11 +40,12 @@
         android:layout_marginTop="8dp"
         android:background="@mipmap/button"
         android:backgroundTint="@color/colorPrimary"
-        android:fontFamily="@font/anton"
-        android:gravity="center|bottom"
-        android:text="Scan"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:text="\nNew\nMap"
+        android:textAllCaps="false"
         android:textColor="#ffffff"
-        android:textSize="20sp"
+        android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintTop_toTopOf="parent" />
@@ -57,11 +59,12 @@
         android:layout_marginTop="8dp"
         android:background="@mipmap/button"
         android:backgroundTint="@color/colorPrimary"
-        android:fontFamily="@font/anton"
-        android:gravity="center|bottom"
-        android:text="Help"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:text="\nHelp"
+        android:textAllCaps="false"
         android:textColor="#ffffff"
-        android:textSize="20sp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toTopOf="parent" />
@@ -73,6 +76,24 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.125" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/scan_button"
+        android:layout_width="66dp"
+        android:layout_height="77dp"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/colorAccent"
+        android:src="@mipmap/qrcode"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline10"
+        app:layout_constraintTop_toTopOf="@+id/guideline11" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -81,6 +102,24 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline5" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp"
+        app:layout_constraintGuide_percent="0.85"/>
 
 </android.support.constraint.ConstraintLayout>

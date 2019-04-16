@@ -1,6 +1,5 @@
 package com.twoonetech.w8r;
 
-import android.provider.Settings;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -15,7 +14,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -25,15 +23,11 @@ public class Robot {
     private String ip;
     private String name;
     private String state = "idle";
-    private String currentPosition;
-    private String destination;
-    private List<String> tables = new ArrayList<>();
+    private String mapJson;
+    private String currentEdge;
+    private String currentDestination;
+    private List<String> log = new ArrayList<>();
     private String appId;
-    private String registered;
-
-    public Robot(String ip) {
-        this.ip = ip;
-    }
 
     public Robot(String ip, String name) {
         this.ip = ip;
@@ -60,44 +54,47 @@ public class Robot {
         this.state = state;
     }
 
-    public String getCurrentPosition() {
-        return currentPosition;
+    public String getCurrentEdge() {
+        return this.currentEdge;
     }
 
-    public void setCurrentPosition(String currentPosition) {
-        this.currentPosition = currentPosition;
+    public void setCurrentEdge(String edgeName) {
+        this.currentEdge = edgeName;
     }
 
-    public String getDestination() {
-        return destination;
+    public String getMapJson() {
+        return mapJson;
     }
 
-    public void setDestination(String destination) {
-        this.destination = destination;
+    public void setMapJson(String mapJson) {
+        this.mapJson = mapJson;
     }
 
-    public List<String> getTables() {
-        return tables;
+    public List<String> getLog() {
+        return log;
     }
 
-    public void setTables(List<String> tables) {
-        this.tables = tables;
-    }
-
-    public String getAppId() {
-        return appId;
+    public void setLog(List<String> log) {
+        this.log = log;
     }
 
     public void setAppId(String appId) {
         this.appId = appId;
     }
 
-    public String getRegistered() {
-        return registered;
-    }
-
-    public void setRegistered(String registered) {
-        this.registered = registered;
+    public void updateStatus(){
+        JSONObject response = httpRequest("get_status", new String[]{}, new String[]{});
+        if (response != null) {
+            try {
+                state = response.getJSONObject("output").getString("status");
+                currentEdge = response.getJSONObject("output").getString("edge");
+            } catch (Exception e) {
+                Log.d("Robot", e.getLocalizedMessage());
+            }
+        } else {
+            state = null;
+            currentEdge = null;
+        }
     }
 
     public String goToTable(String tableId) {
@@ -106,49 +103,34 @@ public class Robot {
             try {
                 return response.getString("output");
             } catch (Exception e) {
-                Log.e("Robot", "Failed to register", e);
+                Log.e("Robot", "Failed to go to table", e);
             }
         }
         return null;
     }
 
-    public void returnToBar() {
-        httpRequest("stop",new String[]{}, new String[]{});
-    }
-
-    public void updateState(){
-        JSONObject response = httpRequest("get_status", new String[]{}, new String[]{});
-        if (response != null) {
-            try {
-                state = response.getJSONObject("output").getString("status");
-            } catch (Exception e) {
-                Log.d("Robot", e.getLocalizedMessage());
-            }
-        }
-    }
-
     public String register(String appId) {
-        this.appId = appId;
         JSONObject response = httpRequest("register",new String[]{"appId","password"},new String[]{appId,appId});
         if (response != null) {
             try {
                 return response.getString("output");
             } catch (Exception e) {
-                Log.e("Robot", "Failed to register", e);
+                Log.e("Robot", "Failed to register",e);
             }
         }
         return null;
     }
 
-    public void updateTables(){
-        JSONObject response = httpRequest("get_tables", new String[]{}, new String[]{});
+    public String assignMap(String mapJson) {
+        JSONObject response = httpRequest("assign_map",new String[]{"map_json"},new String[]{MapConverter.convert(mapJson)});
         if (response != null) {
             try {
-                tables = Arrays.asList(response.getString("output").split(" "));
+                return response.getString("output");
             } catch (Exception e) {
-                Log.e("Robot", "Failed to get tables", e);
+                Log.e("Robot","Failed to assign map",e);
             }
         }
+        return null;
     }
 
     private JSONObject httpRequest(String command, String[] args_names, String[] args_values) {
